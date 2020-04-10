@@ -112,6 +112,13 @@ const normalizeParams = params => params.reduce((acc,p) =>
   : acc.concat(splitParams(p))
 ,[]) // end reduce
 
+const isISODate = d => {
+  try {
+    return (new Date(d)).toISOString()
+  } catch (err) {
+    return false
+  }
+}
 
 // Prepare parameters
 const processParams = (sql,sqlParams,params,row=0) => {
@@ -192,7 +199,10 @@ const formatType = (name,value,type) => {
         [type ? type : error(`'${name}' is an invalid type`)]
         : type === 'isNull' ? true : value
       }
-    }
+    },
+    isISODate(value)
+      ? { typeHint: 'TIMESTAMP' }
+      : {}
   )
 } // end formatType
 
